@@ -4,8 +4,6 @@ import {
 	Toolbar,
 	IconButton,
 	Badge,
-	MenuItem,
-	Menu,
 	Typography
 } from "@material-ui/core";
 import { ShoppingCart } from "@material-ui/icons";
@@ -22,22 +20,22 @@ const NavBar = ({ totalItems }) => {
 			<AppBar position='fixed' className={classes.appBar} color='inherit'>
 				<Toolbar>
 					<Typography
+						className={classes.titel}
 						component={Link}
 						to='/'
 						variant='h6'
-						className={classes.titel}
 						color='inherit'>
 						<img
+							className={classes.image}
 							src={logo}
 							alt='E-Commerce'
 							height='25px'
-							className={classes.image}
 						/>
 						E-Commerce
 					</Typography>
 					<div className={classes.grow} />
 					{location.pathname === "/" && (
-						<div classeName={classes.button}>
+						<div className={classes.button}>
 							<IconButton
 								component={Link}
 								to='/cart'

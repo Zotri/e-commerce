@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { Products, NavBar, Cart } from "./components/";
+import { Products, NavBar, Cart, Checkout } from "./components/";
 import { commerce } from "./lib/commers";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -13,6 +13,8 @@ function App() {
 			formatted_with_symbol: ""
 		}
 	});
+	const [order, setOrder] = useState({});
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const fetchItemsFromCart = async () => {
 		setCart(await commerce.cart.retrieve());
@@ -34,6 +36,7 @@ function App() {
 		const { cart } = await commerce.cart.update(productId, { quantity });
 
 		setCart(cart);
+		console.log("cart update", cart);
 	};
 
 	const hanldeRemoveFromCart = async (productId) => {
@@ -48,13 +51,33 @@ function App() {
 		setCart(cart);
 	};
 
+	const refreshCart = async () => {
+		const newCart = await commerce.cart.refresh();
+
+		setCart(newCart);
+	};
+
+	const hanldeCaptureCheckout = async (checkoutTokenId, newOrder) => {
+		try {
+			const incomingOrder = await commerce.checkout.capture(
+				checkoutTokenId,
+				newOrder
+			);
+
+			setOrder(incomingOrder);
+			console.log("refresh");
+			refreshCart();
+		} catch (error) {
+			setErrorMessage(error.data.error.message);
+		}
+	};
+
 	useEffect(() => {
 		fetchProducts();
 		fetchItemsFromCart();
 	}, []);
 
-	console.log("cart", cart);
-	//console.log("cart items", cart.total_items);
+	console.log("- - - cart - - -", cart);
 	console.log("- - - products api commerce - - -", products);
 	return (
 		<Router>
@@ -71,6 +94,15 @@ function App() {
 							onUpdateCartQuantity={handleUpdateCartQuantity}
 							onRemoveFromCart={hanldeRemoveFromCart}
 							onEmptyCart={handleEmptyCart}
+						/>
+					</Route>
+
+					<Route exact path='/checkout'>
+						<Checkout
+							cart={cart}
+							order={order}
+							onCaptureCheckout={hanldeCaptureCheckout}
+							error={errorMessage}
 						/>
 					</Route>
 				</Switch>
