@@ -20,7 +20,7 @@ const steps = ["Shipping address", "Payment details"];
 //purchasing process
 const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
 	const classes = useStyles();
-	const history = useHistory();
+	let history = useHistory();
 	const [activeStep, setActiveStep] = useState(0);
 	const [checkoutToken, setCheckoutToken] = useState(null);
 	const [shippingData, setShippingData] = useState({});
@@ -47,7 +47,7 @@ const Checkout = ({ cart, order, onCaptureCheckout, error }) => {
 				setCheckoutToken(token);
 			} catch (error) {
 				console.log("Error", error);
-				history.pushState("/");
+				history.push("/");
 			}
 		};
 
